@@ -1,0 +1,95 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[hmargin=2.5cm, vmargin=2cm]{geometry}
+\usepackage{amsthm, amssymb, mathtools, yhmath, graphicx}
+\usepackage{fontspec}
+\usepackage{type1cm, titlesec, titling, fancyhdr, tabularx}
+\usepackage{color, float, hhline}
+
+\usepackage{algorithmicx, algorithm, algpseudocode}
+\usepackage[CheckSingle, CJKmath]{xeCJK}
+\usepackage{CJKulem}
+\usepackage{enumitem}
+\setenumerate{itemsep=0pt}
+\usepackage{tikz}
+\usepackage[abbreviations, binary-units]{siunitx}
+\DeclareSIUnit\mybyte{Byte}
+\usepackage{circuitikz}
+\usepackage[usenames]{xcolor}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{lipsum}
+\BeforeBeginEnvironment{minted}{\vspace*{-5mm}}
+\AfterEndEnvironment{minted}{\vspace*{-5mm}}
+
+\usepackage{titling}
+\setlength{\droptitle}{-3em}
+
+\usetikzlibrary{matrix}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathmorphing}
+
+\usepackage[backend=biber, style=verbose]{biblatex}
+\bibliography{lab3-teach.bib} 
+
+
+\setmainfont{Linux Libertine O}
+\setmonofont{Source Code Pro}
+\setCJKmainfont{Source Han Sans TC}
+
+\def\codesize{\fontsize{10}{15}\selectfont}
+\def\normalsize{\fontsize{12}{18}\selectfont}
+\def\large{\fontsize{14}{21}\selectfont}
+\def\Large{\fontsize{16}{24}\selectfont}
+\def\LARGE{\fontsize{18}{27}\selectfont}
+\def\huge{\fontsize{20}{30}\selectfont}
+
+
+%\titleformat{\section}{\bf\Large}{\arabic{section}}{24pt}{}
+%\titleformat{\subsection}{\large}{\arabic{subsection}.}{12pt}{}
+%\titlespacing*{\subsection}{0pt}{0pt}{1.5ex}
+
+\parindent=0pt
+\parskip=1em
+
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\inpd}{\langle}{\rangle}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+\setminted{
+  linenos=true, frame=lines, framesep=2mm,
+  fontsize=\codesize
+}
+\definecolor{inlinebg}{rgb}{0.9, 0.9, 0.9}
+\setmintedinline{
+  bgcolor=inlinebg,
+}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\newcommand{\img}{\mathsf{i}}
+\newcommand{\ex}{\mathsf{e}}
+\newcommand{\dD}{\mathrm{d}}
+\newcommand{\dI}{\,\mathrm{d}}
+
+\newcommand{\ord}[1]{\opord\left(#1\right)}
+\newcommand{\opord}{\operatorname{\mathcal{O}}}
+
+\setenumerate{itemsep=0pt,topsep=0pt}
+
+\title{數位電路實驗 Lab-3 教學手冊 -- 錄音機 \vspace{-0.2cm}}
+\author{Team \#2 \\ B02901027 茅耀文, B02901178 江誠敏, B02901179 黃凱祺}
+\begin{document}
+\maketitle
+
+\setcounter{section}{-1}
+\section{前言}
+
+\section{C-like Code to Verilog}
+
+
+\end{document}
+
