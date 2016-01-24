@@ -1,0 +1,55 @@
+pre code.hljs {
+  display: block;
+}
+
+code.hljs {
+  display: inline;
+  border-radius: 4px;
+  font-size: 24px;
+  line-height: 26px;
+}
+
+.reveal pre.xx {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.reveal .xx code {
+  font-size: 20px !important;
+  line-height: 24px;
+}
+
+.reveal pre.x3 {
+  width: 31%;
+}
+
+.reveal pre.x2 {
+  width: 46%;
+}
+
+.reveal pre>code.verilog::after {
+  position: absolute;
+  right: 4px;
+  top: -24px;
+  content: 'SystemVerilog';
+  background-color: #AA0000;
+  padding: 0 2px;
+  z-index: -2;
+  border-radius: 2px 2px 0 0;
+  font-size: 22px;
+  line-height: 24px;
+}
+
+.reveal pre>code.scala::after {
+  position: absolute;
+  right: 4px;
+  top: -24px;
+  content: 'Chisel';
+  background-color: #0033CC;
+  padding: 0 2px;
+  z-index: -2;
+  border-radius: 2px 2px 0 0;
+  font-size: 22px;
+  line-height: 24px;
+}
+

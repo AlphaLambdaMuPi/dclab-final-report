@@ -20,6 +20,8 @@
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="reveal/lib/css/zenburn.css">
 
+    <link rel="stylesheet" href="style.css">
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -40,10 +42,206 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
+
         <section>
           <h1>DCLAB Final Presentation</h1>
         </section>
 
+        <!-- Chisel  -->
+        <section>
+          <section>
+            <h2>Chisel</h2>
+          </section>
+          <section>
+            <h3>Profile</h3>
+            <ul>
+              <li>High-level Design</li>
+              <li>Embedded within Scala</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Scala</h3>
+            <ul>
+              <li>Run on JVM</li>
+              <li>Object-Oriented</li>
+              <li>Functional</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Data Type</h3>
+            <ul>
+              <li><code>UInt</code></li>
+              <li><code>SInt</code></li>
+              <li><code>Bool</code></li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Analog to Verilog</h3>
+          </section>
+          <section>
+            <h4>Wire</h4>
+            <pre class="xx"><code data-trim class="verilog">
+wire [3:0] a;
+wire [3:0] b;
+wire [3:0] c;
+assign c = a | b;
+            </code></pre>
+            <pre class="xx"><code data-trim class="scala">
+val a = UInt(width=4)
+val b = UInt(width=4)
+val c = UInt(width=4)
+c := a | b
+            </code></pre>
+          </section>
+          <section>
+            <h4>Register</h4>
+            <pre class="xx"><code data-trim class="verilog">
+reg [3:0] v;
+// ...
+always @(posedge clk) begin
+  if (condition) begin
+    v &lt;= data;
+  end else if (condition2) begin
+    // do something ...
+  end else begin
+    // do something ...
+  end
+end
+            </code></pre>
+            <pre class="xx"><code data-trim class="scala">
+val v = Reg(UInt(width=4))
+// ...
+when (condition) {
+  v := data
+} .elsewhen (condition2) {
+  // do something ...
+} .otherwise {
+  // do something ...
+}
+            </code></pre>
+          </section>
+          <section>
+            <h4>Module</h4>
+            <pre class="xx"><code data-trim class="verilog">
+module Foo(
+    input [3:0] a,
+    input [3:0] b,
+    output [3:0] out,
+);
+// ...
+            </code></pre>
+            <pre class="xx"><code data-trim class="scala">
+class Foo extends Module {
+  val io = new Bundle {
+    val a = UInt(INPUT, 4),
+    val b = UInt(INPUT, 4),
+    val out = UInt(OUTPUT, 4)
+  }
+  // ...
+}
+            </code></pre>
+          </section>
+          <section>
+            <h4>Clock & Reset</h4>
+            <pre class="xx"><code data-trim class="verilog">
+reg foo;
+always_ff @(posedge i_clk or posedge i_rst) begin
+  if (i_rst) begin
+    foo &lt;= INIT_VALUE;
+  end else begin
+    // do something ...
+  end
+end
+            </code></pre>
+            <pre class="xx"><code data-trim class="scala">
+val foo = Reg(Bool(), init=INIT_VALUE)
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Power of Chisel</h3>
+          </section>
+          <section>
+            <h4>Encapsulation</h4>
+            <pre class="xx"><code data-trim class="scala">
+class SomeIO(BIT: Int) extends Bundle {
+  val ready = Bool()
+  val data  = UInt(width=BIT)
+  // ...
+}
+class Foo extends Module {
+  val inData = new SomeIO(32).asInput // 32 bit
+  val outData = new SomeIO(32).asOutput // 32 bit
+  // ...
+}
+            </code></pre>
+          </section>
+          <section>
+            <h4>Object-Oriented</h4>
+            <pre class="xx"><code data-trim class="scala">
+class Button(init: Boolean) extends Bundle {
+  val io = Reg(Bool(init))
+  when (io) {
+    io := Bool(init)
+  }
+  def push() = {
+    io := Bool(!init)
+  }
+}
+
+class Foo extends Module {
+  val button = new Button(false)
+  // ...
+  when (condition) {
+    b.push()
+  }
+}
+            </code></pre>
+          </section>
+          <section>
+            <h4>Testing</h4>
+            <pre class="xx"><code data-trim class="scala">
+class CoreTest(c: MyModule) extends Tester(c) {
+  val ans = SOME_NUMBER
+  poke(c.io.start, 1)
+  step(1)
+  poke(c.io.start, 0)
+  while (!peek(c.io.done)) {
+    step(1)
+    peek(c.io.out)
+  }
+  expect(c.io.out, ans)
+}
+            </code></pre>
+          </section>
+          <section>
+            <h4>A lot of Built-in !</h4>
+            <p>
+              Too much to list here...
+            </p>
+          </section>
+
+          <section>
+            <h3>Cons of Chisel</h3>
+          </section>
+          <section>
+            <h4>Awful Enum</h4>
+            <pre class="xx"><code data-trim class="scala">
+val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
+//                              ^^^^^^        ^^^^^^^^^
+// If you have more states... What The ____?
+            </code></pre>
+          </section>
+        </section>
+        <!-- myHDL  -->
+        <section>
+          <section>
+            <h2>MyHDL</h2>
+          </section>
+        </section>
+        <!-- C to verilog  -->
         <section>
           <section>
             <h2>C-like Code to Verilog</h2>
