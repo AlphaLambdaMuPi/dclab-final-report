@@ -1,0 +1,18 @@
+\documentclass[tikz, border=5pt, convert={outext=.svg, density=500x500}]{standalone}
+%\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[y=-1cm, every node/.style={draw, rectangle, white}]
+    \node (1) at (0, 0) {C-like code};
+    \node (2) at (0, 1) {Lexer/Parser};
+    \node (3) at (0, 2) {AST};
+    \node (4) at (0, 3) {State Machine};
+    \node (5) at (0, 4) {Verilog AST};
+    \node (6) at (0, 5) {Verilog Code};
+    \draw[-latex, thick, white] (1) -- (2);
+    \draw[-latex, thick, white] (2) -- (3);
+    \draw[-latex, thick, white] (3) -- (4);
+    \draw[-latex, thick, white] (4) -- (5);
+    \draw[-latex, thick, white] (5) -- (6);
+ \end{tikzpicture}
+\end{document}
+\end{document}

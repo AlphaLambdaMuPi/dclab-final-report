@@ -241,6 +241,7 @@ val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
             <h2>MyHDL</h2>
           </section>
         </section>
+
         <!-- C to verilog  -->
         <section>
           <section>
@@ -248,8 +249,15 @@ val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
           </section>
 
           <section>
+            <ul>
+              <li>C-like syntax, logic.</li>
+              <li>High level synthesis.</li>
+            </ul>
+          </section>
+
+          <section>
             <h2>Example</h2>
-            <pre style="width: 45%; display: inline-block; vertical-align: top;"><code data-trim> 
+            <pre class="xx" style="width:50%"><code data-trim> 
 int f(int a, int b) {
   if (a > b)
     return a;
@@ -257,38 +265,193 @@ int f(int a, int b) {
     return b;
 }
             </code></pre>
+          </section>
+          <section>
+            <pre class="xx x2"><code class="verilog" data-trim> 
+module f(clk, reset, start,
+result, done, a, b);
 
-            <pre style="width: 45%; display: inline-block;"><code data-trim> 
-module f(clk, reset, start, 
-  result, done, a, b);
- reg [31:0] state;
+reg [31:0] state;
 input wire clk;
 input wire reset;
 ...
 always @(posedge clk) begin
-if (reset) begin
-state <= 0;
-result <= 0;
-...
-end else begin
-case(state)
-0: begin
-state <= (start) ? (1) : (0);
-done <= (start) ? (0) : (1);
-end
-...
+  if (reset) begin
+    state <= 0;
+    result <= 0;
+    ...
+            </code></pre>
+            <pre class="xx x2"><code class="verilog">    0: begin
+      state <= (start) ? (1) : (0);
+      done <= (start) ? (0) : (1);
+    end
+    1: begin
+      _a <= a;
+      _b <= b;
+      ...
+  end
 endmodule
             </code></pre>
           </section>
 
           <section>
+            <h3>Why not pure C?</h3>
+            <p>There are already some C-to-Verilog tools</p>
+          </section>
+
+          <section>
+            <h3>Main procedure</h3>
+            <img src="fig/fig1.svg" width="25%">
+          </section>
+
+          <section>
             <h3>State Machine</h3>
+            <pre class="xx x2"><code class="cpp" data-trim> 
+if ( #1 ) {
+  #2
+}
+#3
+            </code></pre>
+            <img src="fig/fig2.svg" width="20%">
+          </section>
+
+          <section>
+            <h3>State Machine</h3>
+            <pre class="xx x2"><code class="cpp" data-trim> 
+while ( #1 ) {
+  #2
+}
+#3
+            </code></pre>
+            <img src="fig/fig3.svg" width="20%">
+          </section>
+
+          <section>
+            <h3>Function Call</h3>
+            <img src="fig/fig4.svg" width="60%">
+          </section>
+
+          <section>
+            <h3>Tests - RSA256</h3>
+            <p>Given $a, d, n$, calculate $a^d \bmod{n}$.</p>
+            <p>Our lab homework 2.</p>
+          </section>
+
+          <section>
+            <h3>Result</h3>
+            <table>
+              <tr>
+                <td></td>
+                <td>Clock cycle</td>
+                <td>Code size (line).</td>
+              </tr>
+              <tr>
+                <td> Verilog </td>
+                <td> $ 3.1 \times 10^5 $</td>
+                <td> $33$ lines</td>
+              </tr>
+              <tr>
+                <td> C-like</td>
+                <td> $ 7.2 \times 10^5 $</td>
+                <td> $205$ lines</td>
+              </tr>
+            </table>
+          </section>
+
+          <section>
+            <h3>Async Function</h3>
+            <pre><code data-trim data-noescape>
+<font color="#4488FF">async</font> gdone, gres = g(a=a, b=temp, m=m) -&gt; bits[260];
+
+...
+
+<font color="#4488FF">await</font> gdone;
+a = gres;
+
+...
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Result with async</h3>
+            <table>
+              <tr>
+                <td></td>
+                <td>Clock cycle</td>
+                <td>Code size (line).</td>
+              </tr>
+              <tr>
+                <td> Verilog </td>
+                <td> $ 3.1 \times 10^5 $</td>
+                <td> $205$ lines</td>
+              </tr>
+              <tr>
+                <td> No Async </td>
+                <td> $ 7.2 \times 10^5 $</td>
+                <td> $33$ lines</td>
+              </tr>
+              <tr>
+                <td> Async </td>
+                <td> $ 3.5 \times 10^5 $</td>
+                <td> $38$ lines</td>
+              </tr>
+            </table>
+          </section>
+
+          <section>
+            <h2>Future work</h2>
+          </section>
+
+          <section>
+            <h3>State Compression</h3>
+            <p>Remove duplicate states.</p>
+          </section>
+
+          <section>
+            <h3>Modulize</h3>
+            <pre class="xx"><code class="cpp" data-trim> 
+module AvalonMaster(avm_read, avm_write, ... ) {
+  int read(int addr) {
+    avm_read, avm_address = 1, addr;
+    await (!wait_request);
+    ...
+  }
+  void write(int addr, int value) {
+    avm_write, avm_address, avm_write_data = 1, addr, value;
+    await (!wait_request);
+    ...
+  }
+}
+            </code></pre>
+
+            <pre class="xx"><code class="cpp" data-trim> 
+void RSAWrapper(avm_read, avm_write, ... ) : AvalonMaster {
+  ...
+  read(addr);
+  ...
+  write(addr, val);
+}
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Simulation</h2>
           </section>
           
           <section>
-            <h3>Async Function.</h3>
+            <h3> Difficulties </h3>
+            <p>Hard to achieve precise clock controls</p>
+          </section>
+
+          <section>
+            <h3> Advantages </h3>
+            <ul>
+              <li>Less code</li>
+              <li>Cooperate</li>
+            </ul>
           </section>
         </section>
+
 			</div>
 
 		</div>
@@ -315,7 +478,8 @@ endmodule
 					{ src: 'reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: 'reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 					{ src: 'reveal/plugin/zoom-js/zoom.js', async: true },
-					{ src: 'reveal/plugin/notes/notes.js', async: true }
+					{ src: 'reveal/plugin/notes/notes.js', async: true },
+					{ src: 'reveal/plugin/math/math.js', async: true }
 				]
 			});
 

@@ -1,0 +1,21 @@
+\documentclass[tikz, border=5pt, convert={outext=.svg, density=500x500}]{standalone}
+%\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm, 
+  every node/.style={white},
+  qq/.style={draw, white, very thick}]
+    \node at (-0.5, 3.5) {\texttt{start}};
+    \node at (-0.5, 2.5) {\texttt{args}};
+    \node at (-0.5, 1.5) {\texttt{done}};
+    \node at (-0.5, 0.5) {\texttt{result}};
+    \draw[qq] (0, 3.2) -- (2, 3.2) -- (2, 3.8) -- (3, 3.8) -- 
+      (3, 3.2) -- (8, 3.2);
+    \draw[qq] (0, 2.2) -- (1, 2.2) -- (1, 2.8) -- (4, 2.8);
+    \draw[qq] (1, 2.2) -- (4, 2.2);
+    \draw[qq] (0, 1.2) -- (6, 1.2) -- (6, 1.8) -- (7, 1.8) -- 
+      (7, 1.2) -- (8, 1.2);
+    \draw[qq] (5, 0.8) -- (7, 0.8) -- (7, 0.2) -- (8, 0.2);
+    \draw[qq] (5, 0.2) -- (7, 0.2);
+ \end{tikzpicture}
+\end{document}
+\end{document}

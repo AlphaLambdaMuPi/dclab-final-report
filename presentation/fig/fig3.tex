@@ -1,0 +1,15 @@
+\documentclass[tikz, border=5pt, convert={outext=.svg, density=500x500}]{standalone}
+%\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[x=1.5cm, y=-1.5cm, 
+  every node/.style={draw, circle, white, very thick},
+  qq/.style={draw, white, -latex, very thick}]
+    \node (1) at (0, 0) {\#1};
+    \node (2) at (1, 1) {\#2};
+    \node (3) at (0.3, 2) {\#3};
+    \draw[qq] (1) edge[bend left] (2);
+    \draw[qq] (1) edge[bend right] (3);
+    \draw[qq] (2) edge[bend left] (1);
+ \end{tikzpicture}
+\end{document}
+\end{document}
