@@ -48,6 +48,41 @@
           <section>
             <h2>C-like Code to Verilog</h2>
           </section>
+
+          <section>
+            <h2>Example</h2>
+            <pre style="width: 45%; display: inline-block; vertical-align: top;"><code data-trim> 
+int f(int a, int b) {
+  if (a > b)
+    return a;
+  else
+    return b;
+}
+            </code></pre>
+
+            <pre style="width: 45%; display: inline-block;"><code data-trim> 
+module f(clk, reset, start, 
+  result, done, a, b);
+ reg [31:0] state;
+input wire clk;
+input wire reset;
+...
+always @(posedge clk) begin
+if (reset) begin
+state <= 0;
+result <= 0;
+...
+end else begin
+case(state)
+0: begin
+state <= (start) ? (1) : (0);
+done <= (start) ? (0) : (1);
+end
+...
+endmodule
+            </code></pre>
+          </section>
+
           <section>
             <h3>State Machine</h3>
           </section>
