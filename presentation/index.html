@@ -69,7 +69,7 @@
             </ul>
           </section>
           <section>
-            <h3>Data Type</h3>
+            <h3>Data Types</h3>
             <ul>
               <li><code>UInt</code></li>
               <li><code>SInt</code></li>
@@ -180,8 +180,9 @@ class Foo extends Module {
           </section>
           <section>
             <h4>Object-Oriented</h4>
-            <pre class="xx"><code data-trim class="scala">
-class Button(init: Boolean) extends Bundle {
+            <pre class="xx x2"><code data-trim class="scala">
+class Button(init: Boolean)
+    extends Bundle {
   val io = Reg(Bool(init))
   when (io) {
     io := Bool(init)
@@ -190,7 +191,8 @@ class Button(init: Boolean) extends Bundle {
     io := Bool(!init)
   }
 }
-
+            </code></pre>
+            <pre class="xx x2"><code data-trim class="scala">
 class Foo extends Module {
   val button = new Button(false)
   // ...
@@ -239,6 +241,31 @@ val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
         <section>
           <section>
             <h2>MyHDL</h2>
+          </section>
+          <section>
+            <h3>Profile</h3>
+            <ul>
+              <li>Python Library</li>
+              <li>Focus on high-level modeling</li>
+              <li>A lot of restriction for converting to verilog</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Data Types</h3>
+            <ul>
+              <li>Python built-in: <code>int, bool</code></li>
+              <li><code>intbv</code> (mutable)</li>
+              <li><code>modbv</code> (mutable)</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Cons of MyHDL</h3>
+            <p class="fragment">
+              Wait... !?
+            </p>
+          </section>
+          <section>
+            <h4></h4>
           </section>
         </section>
         <!-- C to verilog  -->
