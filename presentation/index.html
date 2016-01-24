@@ -20,6 +20,8 @@
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="reveal/lib/css/zenburn.css">
 
+    <link rel="stylesheet" href="style.css">
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -40,10 +42,91 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
+
         <section>
           <h1>DCLAB Final Presentation</h1>
         </section>
 
+        <!-- Chisel  -->
+        <section>
+          <section>
+            <h2>Chisel</h2>
+          </section>
+          <section>
+            <h3>Profile</h3>
+            <ul>
+              <li>Embedded within Scala</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Scala</h3>
+            <ul>
+              <li>Run on JVM</li>
+              <li>Object-Oriented</li>
+              <li>Functional</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Analog to Verilog</h3>
+          </section>
+          <section>
+            <h4>Wire</h4>
+            <pre class="xx x2"><code data-trim class="verilog">
+wire [3:0] a;
+wire [3:0] b;
+wire [3:0] c;
+assign c = a | b;
+            </code></pre>
+            <pre class="xx x2"><code data-trim class="scala">
+val a = UInt(with=4)
+val b = UInt(with=4)
+val c = UInt(with=4)
+c := a | b
+            </code></pre>
+          </section>
+          <section>
+            <h4>Module</h4>
+            <pre class="xx x2"><code data-trim class="verilog">
+module Foo(
+    input [3:0] a,
+    input [3:0] b,
+    output [3:0] out,
+);
+// ...
+            </code></pre>
+            <pre class="xx x2"><code data-trim class="scala">
+class Foo extends Module {
+  val io = new Bundle {
+    val a = UInt(INPUT, 4),
+    val b = UInt(INPUT, 4),
+    val out = UInt(OUTPUT, 4)
+  }
+  // ...
+}
+);
+            </code></pre>
+          </section>
+          <section>
+            <h4>Clock & Reset</h4>
+            <pre class="xx x2"><code data-trim class="verilog">
+            </code></pre>
+            <pre class="xx x2"><code data-trim class="scala">
+            </code></pre>
+          </section>
+          <section>
+            <h3>Chisel's Power</h3>
+          </section>
+          <section>
+            <h4>Encapsulation with Bundle</h4>
+          </section>
+          <section>
+            <h3>Chisel's Cons</h3>
+          </section>
+          <section>
+            <h4>Awful Enum</h4>
+          </section>
+        </section>
+        <!-- C to verilog  -->
         <section>
           <section>
             <h2>C-like Code to Verilog</h2>
