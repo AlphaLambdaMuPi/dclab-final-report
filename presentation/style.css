@@ -31,7 +31,7 @@ code.hljs {
   position: absolute;
   right: 4px;
   top: -24px;
-  content: 'verilog';
+  content: 'SystemVerilog';
   background-color: #AA0000;
   padding: 0 2px;
   z-index: -2;
@@ -44,7 +44,7 @@ code.hljs {
   position: absolute;
   right: 4px;
   top: -24px;
-  content: 'scala';
+  content: 'Chisel';
   background-color: #0033CC;
   padding: 0 2px;
   z-index: -2;
