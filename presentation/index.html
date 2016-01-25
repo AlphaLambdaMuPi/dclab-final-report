@@ -489,6 +489,34 @@ while ( #1 ) {
           </section>
 
           <section>
+            <h3>HW2 Algorithm</h3>
+            <pre class="xx x2"><code data-trim>
+def fast_pow(a, d, n):
+  temp = 1
+  while d:
+    if d & 1:
+      temp = big_mult(temp, a, n):
+
+    a = big_mult(a, a, n)
+    d >>= 1
+            </code></pre>
+            <pre class="xx x2"><code data-trim>
+def big_mult(a, b, n):
+  temp = 0
+  for i in range(256):
+    if b & 1:
+      temp += a
+    if temp & 1:
+      temp += n
+    temp >>= 1
+
+  if temp < n:
+    temp -= n
+  return temp
+            </code></pre>
+          </section>
+
+          <section>
             <h3>Result</h3>
             <table>
               <tr>
