@@ -88,7 +88,7 @@ wire [3:0] b;
 wire [3:0] c;
 assign c = a | b;
             </code></pre>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 val a = UInt(width=4)
 val b = UInt(width=4)
 val c = UInt(width=4)
@@ -110,7 +110,7 @@ always @(posedge clk) begin
   end
 end
             </code></pre>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 val v = Reg(UInt(width=4))
 // ...
 when (condition) {
@@ -132,7 +132,7 @@ module Foo(
 );
 // ...
             </code></pre>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 class Foo extends Module {
   val io = new Bundle {
     val a = UInt(INPUT, 4),
@@ -155,7 +155,7 @@ always_ff @(posedge i_clk or posedge i_rst) begin
   end
 end
             </code></pre>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 val foo = Reg(Bool(), init=INIT_VALUE)
             </code></pre>
           </section>
@@ -165,7 +165,7 @@ val foo = Reg(Bool(), init=INIT_VALUE)
           </section>
           <section>
             <h4>Encapsulation</h4>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 class SomeIO(BIT: Int) extends Bundle {
   val ready = Bool()
   val data  = UInt(width=BIT)
@@ -180,7 +180,7 @@ class Foo extends Module {
           </section>
           <section>
             <h4>Object-Oriented</h4>
-            <pre class="xx x2"><code data-trim class="scala">
+            <pre class="xx x2"><code data-trim class="scala chisel">
 class Button(init: Boolean)
     extends Bundle {
   val io = Reg(Bool(init))
@@ -192,7 +192,7 @@ class Button(init: Boolean)
   }
 }
             </code></pre>
-            <pre class="xx x2"><code data-trim class="scala">
+            <pre class="xx x2"><code data-trim class="scala chisel">
 class Foo extends Module {
   val button = new Button(false)
   // ...
@@ -204,7 +204,7 @@ class Foo extends Module {
           </section>
           <section>
             <h4>Testing</h4>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 class CoreTest(c: MyModule) extends Tester(c) {
   val ans = SOME_NUMBER
   poke(c.io.start, 1)
@@ -230,7 +230,7 @@ class CoreTest(c: MyModule) extends Tester(c) {
           </section>
           <section>
             <h4>Awful Enum</h4>
-            <pre class="xx"><code data-trim class="scala">
+            <pre class="xx"><code data-trim class="scala chisel">
 val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
 //                              ^^^^^^        ^^^^^^^^^
 // If you have more states... What The ____?
@@ -259,13 +259,102 @@ val s_done :: s_start :: s_calc :: Nil = Enum(UInt(), 3)
             </ul>
           </section>
           <section>
-            <h3>Cons of MyHDL</h3>
-            <p class="fragment">
-              Wait... !?
+            <h3>Analog to (System)Verilog</h3>
+          </section>
+          <section>
+            <h4>Wire & Reg</h4>
+            <p>
+              Both <code>wire, reg</code> are represented by
+              <code>Signal</code> in MyHDL.
+            </p>
+            <pre class="xx x2"><code data-trim class="verilog">
+wire [3:0] a;
+reg  [3:0] b;
+wire c;
+            </code></pre>
+            <pre class="xx x2"><code data-trim class="python myhdl">
+a = Signal(intbv(0)[4:])
+b = Signal(intbv(0)[4:])
+c = Signal(False)
+# can't tell which one is reg...
+            </code></pre>
+          </section>
+          <section>
+            <h4>Basic Structure</h4>
+            <pre class="xx"><code data-trim class="python myhdl">
+def MyModule(a, b, out, clk):
+    """
+    All parameter are Signals
+    """
+    BIT = 8
+    internal = Signal(intbv(0)[BIT:])
+    @always_comb
+    def logic():
+        internal.next = a if a &lt; b else b
+
+    @always(clk.posedge)
+    def calc():
+        out.next = interal * a
+
+    return logic, calc
+            </code></pre>
+            <p>
+              Write code just like using SystemVerilog.
             </p>
           </section>
           <section>
-            <h4></h4>
+            <h4>Object-Oriented Modeling</h4>
+            <pre class="xx"><code data-trim class="python myhdl">
+from myhdl import *
+
+def trigger(event):
+    event.next = not event
+
+class queue:
+    def __init__(self):
+       self.l = []
+       self.sync = Signal(0)
+       self.item = None
+    def put(self, item):
+       self.l.append(item)
+       trigger(self.sync)
+    def get(self):
+       if not self.l:
+          yield self.sync
+       self.item = self.l.pop(0)
+            </code></pre>
+            <p>But this code can't be converted to Verilog. T_T</p>
+          </section>
+          <section>
+            <h4>Testing</h4>
+            <pre class="xx"><code data-trim class="python myhdl">
+PERIOD = ...
+def bench():
+    # define some variables ...
+    dut = MyModule(...)
+    # dut = toVerilog(MyModule, ...)
+    @always(delay(PERIOD // 2))
+    def clkgen():
+        clk.next = not clk
+
+    @instance
+    def stimulus():
+        # do something ...
+        yield clk.posedge # can yield
+        raise StopSimulation
+
+def test_bench():
+    sim = Simulation(bench())
+    sim.run()
+            </code></pre>
+          </section>
+          <section>
+            <h3>Cons of MyHDL</h3>
+            <ul class="fragment">
+              <li>No <code>assign</code> outside <code>@always_comb</code></li>
+              <li>Can't distinguish between wire and reg</li>
+              <li>Can't convert High level modeling to Verilog</li>
+            </ul>
           </section>
         </section>
 
@@ -375,12 +464,12 @@ while ( #1 ) {
               <tr>
                 <td> Verilog </td>
                 <td> $ 3.1 \times 10^5 $</td>
-                <td> $33$ lines</td>
+                <td> $205$ lines</td>
               </tr>
               <tr>
                 <td> C-like</td>
                 <td> $ 7.2 \times 10^5 $</td>
-                <td> $205$ lines</td>
+                <td> $33$ lines</td>
               </tr>
             </table>
           </section>
