@@ -11,11 +11,11 @@
 \usepackage{CJKulem}
 \usepackage{enumitem}
 \setenumerate{itemsep=0pt}
-\usepackage{tikz}
 \usepackage[abbreviations, binary-units]{siunitx}
 \DeclareSIUnit\mybyte{Byte}
-\usepackage{circuitikz}
 \usepackage[usenames]{xcolor}
+\usepackage{tikz}
+\usepackage{circuitikz}
 \usepackage{hyperref}
 \usepackage{minted}
 \usepackage{lipsum}
@@ -30,7 +30,7 @@
 \usetikzlibrary{decorations.pathmorphing}
 
 \usepackage[backend=biber, style=verbose]{biblatex}
-\bibliography{lab3-teach.bib} 
+\bibliography{lab3-teach.bib}
 
 
 \setmainfont{Linux Libertine O}
@@ -87,6 +87,47 @@
 
 \setcounter{section}{-1}
 \section{前言}
+
+\section{Chisel}
+
+\subsection{Basic Mappings from Verilog}
+{\tt wire [n:0] foo; } {\tt val foo = UInt(width=n) }
+
+{\tt reg [n:0] bar; } {\tt val bar = Reg(UInt(width=n)) }
+
+{\tt assign foo = a + b; } {\tt foo := a + b }
+
+{\tt bar <= a + b; } {\tt bar := a + b }
+\subsection{Clock and Reset}
+\subsection{Encapsulation}
+定義溝通界面
+
+可在使用時再決定是 input 或是 output 。
+\subsection{Object-Oriented}
+物件導向的設計方式
+
+注： 在使用 Module 的時候需要用 Module(new MyModule) 的方式，故
+Module 之間是不能呼叫函數的。 (也很合理)
+
+\subsection{Testing with ease}
+Chisel 提供方便寫 Testbench 的方法
+
+\subsection{Other Features}
+由於 Chisel 是建立在 Scala 之上，因此可以運用 Scala 的特性做 Parameterization
+
+另外 Chisel 也提供相當多 Built-in 的功能可以使用
+
+\subsection{Tips and Tricks}
+Chisel 本身沒有定義型態的隱性轉換，這在編寫程式時相當不便。
+比較好的方法是在一個檔裡寫下：
+
+並在其他的檔引入這些函數。
+
+\section{MyHDL}
+建立在 Python 之上，主要是用來做 High level modeling 。轉換成 Verilog
+的能力有限。其中可轉換成 Verilog 的部分除了 Python 自身 syntax 比較簡潔之外，
+並沒有比 Verilog 好寫，轉換出來的結果也就是跟直接寫 Verilog 差不太多，
+因此這邊就不多說明。
 
 \section{C-like Code to Verilog}
 我們還額外實做了一個把一個我們自已定出的語言 Compile 成 Verilog code
