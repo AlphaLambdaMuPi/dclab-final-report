@@ -340,7 +340,7 @@ def bench():
     @instance
     def stimulus():
         # do something ...
-        yield clk.posedge # can yield
+        yield clk.posedge # wait for posedge
         raise StopSimulation
 
 def test_bench():
@@ -354,6 +354,25 @@ def test_bench():
               <li>No <code>assign</code> outside <code>@always_comb</code></li>
               <li>Can't distinguish between wire and reg</li>
               <li>Can't convert High level modeling to Verilog</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Comparison</h2>
+          </section>
+          <section>
+            <h3>About Programming</h3>
+            <ul>
+              <li>Chisel: Better for large design, make testing much easier.</li>
+              <li>MyHDL: Suit to demonstrating and verifying concepts.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>About Performance</h3>
+            <ul>
+              <li>Chisel: Can be compared to writing verilog.</li>
             </ul>
           </section>
         </section>
