@@ -30,12 +30,14 @@
 \usetikzlibrary{decorations.pathmorphing}
 
 \usepackage[backend=biber, style=verbose]{biblatex}
-\bibliography{lab3-teach.bib}
+\bibliography{final.bib}
 
 
 \setmainfont{Linux Libertine O}
 \setmonofont{Source Code Pro}
 \setCJKmainfont{Source Han Sans TC}
+\setCJKsansfont{Source Han Sans TC}
+\setCJKmonofont{Source Han Sans TC}
 
 \def\codesize{\fontsize{10}{15}\selectfont}
 \def\normalsize{\fontsize{12}{18}\selectfont}
@@ -89,45 +91,127 @@
 \section{前言}
 
 \section{Chisel}
+Chisel 是一個用來做高階硬體的語言，其本質上是一個 Scala 的 library 。
+下面將會注重於比較用 Verilog 與 Chisel 編寫的差異和使用 Chisel 的好處。
 
 \subsection{Basic Mappings from Verilog}
-{\tt wire [n:0] foo; } {\tt val foo = UInt(width=n) }
-
-{\tt reg [n:0] bar; } {\tt val bar = Reg(UInt(width=n)) }
-
-{\tt assign foo = a + b; } {\tt foo := a + b }
-
-{\tt bar <= a + b; } {\tt bar := a + b }
+\hspace{2em}
+\begin{minipage}{0.4\textwidth}
+  \begin{minted}{verilog}
+wire [n:0] foo;
+reg [n:0] bar;
+assign foo = a + b;
+bar <= a + b;
+  \end{minted}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}{0.4\textwidth}
+  \begin{minted}{scala}
+val foo = UInt(width=n)
+val bar = Reg(UInt(width=n))
+foo := a + b
+bar := a + b
+  \end{minted}
+\end{minipage}
 \subsection{Clock and Reset}
+\begin{minted}{scala}
+// Auto set bar to 0 at posedge of reset
+// and change its value at posedge of clk
+val bar = Reg(UInt(width=8), init=UInt(0))
+when (condition) {
+  // update register bar when "condition" is ture at posedge of clock
+  bar := a | b
+}
+\end{minted}
+對於每個 module 而言 Chisel 會自動提供一個 clock 和 reset 的 input ，
+因此不需要像 Verilog 那樣自己寫。
+當然如果有多個 clock 時也可以指定使用特定的 clock ，細節可參考
+Multiple Clock Domains\footcite{chisel:multi-clock}，在此不多做說明。
 \subsection{Encapsulation}
-定義溝通界面
+隨著設計變得龐大，模組之間的 IO 規範會越來越多，在 Chisel 裡面可以用繼承
+{\tt Bundle} 的方式來定義溝通界面，並在使用時再決定是輸入還是輸出。
+與 Verilog 相比，封裝使 Chisel 的程式碼在閱讀和維護上都更容易。
 
-可在使用時再決定是 input 或是 output 。
+\begin{minted}{scala}
+// Encapsulation example
+class SomeIO extends Bundle {
+  val ready = Bool(false)
+  val data = UInt(width=32)
+  val control = UInt(width=8)
+}
+
+// Following code should be put in a Module or a Bundle
+// Use SomeIO as input and output
+val in = new SomeIO().asInput
+val out = new SomeIO().asOutput
+\end{minted}
 \subsection{Object-Oriented}
-物件導向的設計方式
+除了封裝 IO 的格式之外，也可利用 Scala 語言本身的功能來實做物件導向的設計。
+這是 Verilog 難以做到的。具體來說我們可以將一些接線的規則用函式包裝起來，
+在需要的時候呼叫函式，如下面所示：
 
-注： 在使用 Module 的時候需要用 Module(new MyModule) 的方式，故
-Module 之間是不能呼叫函數的。 (也很合理)
+\begin{minted}{scala}
+// Object-oriented design
+class Button extends Bundle {
+  val isPushed = Reg(Bool(false))
+  when (isPushed) { isPushed := Bool(false) }
+  def push = { isPushed := Bool(true) }
+}
 
-\subsection{Testing with ease}
-Chisel 提供方便寫 Testbench 的方法
+// Following code should be put in a Module or a Bundle
+val button = new Button
+when (condition) {
+  button.push() // same as button.isPushed := Bool(true)
+}
+\end{minted}
 
-\subsection{Other Features}
-由於 Chisel 是建立在 Scala 之上，因此可以運用 Scala 的特性做 Parameterization
+需要注意的是，由於在使用 Module 的時候需要用 {\tt Module(new MyModule)}
+的方式，故 Module 之間是不能呼叫函數的。 (也很合理)
 
-另外 Chisel 也提供相當多 Built-in 的功能可以使用
+\subsection{Testing with Ease}
+Chisel 的一個重要功能是產生 C++ 的模擬程式來做電路測試。而測試相當易寫，
+產生出來的測試檔效能也不錯。範列如下：
+\begin{minted}{scala}
+class TopTest(c: Top) extends Tester(c) {
+  val ans = 10
+  poke(c.io.start, 1) // set input wire "start" of Top to 1
+  step(1) // go to the next clock cycle
+  poke(c.io.start, 0)
+  while (!peek(c.io.done)) {
+    step(1)
+    peek(c.io.out) // print the value of wire "out" of Top
+  }
+  expect(c.io.out, ans) // check if the value of "out" is equal to ans
+}
+\end{minted}
 
 \subsection{Tips and Tricks}
 Chisel 本身沒有定義型態的隱性轉換，這在編寫程式時相當不便。
-比較好的方法是在一個檔裡寫下：
-
+比較好的方法是在一個檔裡寫下類似如下列的程式碼：
+\begin{minted}{scala}
+object Conv {
+  implicit def intToUInt(x: Int): UInt = UInt(x)
+  implicit def intToBoolean(x: Int): Boolean = if (x != 0) true else false
+  implicit def booleanToInt(x: Boolean): Int = if (x) 1 else 0
+  implicit def UIntToBool(x: UInt): Bool = x != 0
+}
+\end{minted}
 並在其他的檔引入這些函數。
 
+\subsection{Other Features}
+Chisel 是建立在 Scala 之上，因此可以運用 Scala 的特性做 Parameterization 。
+這也是 Verilog 所做不到的。
+這邊的內容太多，在此不多做說明，細節可參考 Advanced Parameterization
+\footcite{chisel:adv-param}。
+
+除了上述內容之外， Chisel 還有提供相當多 Built-in 的功能可以使用，
+相關資訊可參考 Chisel Cheatsheet\footcite{chisel:cs}。
+
 \section{MyHDL}
-建立在 Python 之上，主要是用來做 High level modeling 。轉換成 Verilog
-的能力有限。其中可轉換成 Verilog 的部分除了 Python 自身 syntax 比較簡潔之外，
-並沒有比 Verilog 好寫，轉換出來的結果也就是跟直接寫 Verilog 差不太多，
-因此這邊就不多說明。
+不同於 Chisel ， MyHDL 是建立在 Python 之上，主要用途是 High level modeling 。
+轉換成 Verilog 的能力有限。其中可轉換成 Verilog 的部分除了 Python 自身 syntax
+比較簡潔之外，並沒有比 Verilog 好寫，轉換出來的結果也跟直接寫 Verilog 差不太多，
+整體來看並沒有太多的好處，因此這邊就不多說明。
 
 \section{C-like Code to Verilog}
 我們還額外實做了一個把一個我們自已定出的語言 Compile 成 Verilog code
